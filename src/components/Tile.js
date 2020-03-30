@@ -3,12 +3,13 @@ import React from 'react'
 class Tile extends React.Component {
     state = {
         revealed: false,
-        flag: false
+        flag: false,
+        position: [this.props.x, this.props.y]
     }
 
     // Sets tile state to revealed. If it is the first tile it generates the mines
     reveal() {
-        this.props.generateMines(this.props.x, this.props.y)
+        this.props.generateMines(this.state.position)
         this.props.generateValues()
         this.setState({ revealed: true })
     }
