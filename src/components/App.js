@@ -1,15 +1,13 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Menu from './Menu.js'
 import Game from './Game.js'
 
-class App extends React.Component {
-    state = {}
-
+class App extends Component {
     render() {
         return (
             <React.Fragment>
                 <Menu />
-                <Game width="9" height="9" mines="10" />
+                <Game width="10" height="10" nukes="20" />
             </React.Fragment>
         )
     }

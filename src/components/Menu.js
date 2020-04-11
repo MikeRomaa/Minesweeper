@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { Component } from 'react'
 
-class Menu extends React.Component {
+class Menu extends Component {
     state = {}
 
     render() {
