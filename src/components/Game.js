@@ -3,7 +3,9 @@ import React, { Component } from 'react'
 class Game extends Component {
     state = {
         board: this.generateBoard(this.props.height, this.props.width),
-        boardPopulated: false
+        boardPopulated: false,
+        win: false,
+        loss: false
     }
 
     // Generates a matrix with no nukes or values
@@ -74,8 +76,10 @@ class Game extends Component {
         return tiles
     }
 
-    // If 0, open all surrounding tiles. If one of those tiles is 0, add them to the queue. 
     clearTile(indexX, indexY) {
+        if (this.state.board[indexY][indexX].nuke) {
+            this.setState({ loss: true })
+        }
         let tempBoard = this.state.board
         
         tempBoard[indexY][indexX].revealed = true
@@ -86,6 +90,13 @@ class Game extends Component {
         }
 
         this.setState({ board: tempBoard })
+
+        let totalSafeTiles = this.props.height * this.props.width - this.props.nukes
+        let revealedSafeTiles = 0
+        this.state.board.forEach((row) => row.forEach((tile) => { if (tile.revealed) { revealedSafeTiles++ } }))
+        if (totalSafeTiles === revealedSafeTiles) {
+            this.setState({ win: true })
+        }
     }
 
     // Handles left click event to reveal a tile
@@ -106,6 +117,20 @@ class Game extends Component {
         }
     }
 
+    // Resets the game upon losing or winning
+    resetGame() {
+        return () => {
+            if (this.state.loss || this.state.win) {
+                this.setState({
+                    board: this.generateBoard(this.props.height, this.props.width),
+                    boardPopulated: false,
+                    win: false,
+                    loss: false
+                })
+            }
+        }
+    }
+
     render() {
         return (
             <div className="game">
@@ -121,6 +146,10 @@ class Game extends Component {
                         )}
                     </div>
                 )}
+                <div className={this.state.loss || this.state.win ? 'pop-up' : 'd-none'} style={{ width: parseInt(this.props.width) * 50 + 'px', height: parseInt(this.props.height) * 50 + 'px'}}>
+                    {this.state.loss ? 'You lost, you fucking degenerate...' : 'Congratulations, you win!'}
+                    <button onClick={this.resetGame()}>Restart</button>
+                </div>
             </div>
         )
     }
