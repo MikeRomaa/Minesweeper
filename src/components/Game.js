@@ -146,9 +146,9 @@ class Game extends Component {
                         )}
                     </div>
                 )}
-                <div className={this.state.loss || this.state.win ? 'pop-up' : 'd-none'} style={{ width: parseInt(this.props.width) * 50 + 'px', height: parseInt(this.props.height) * 50 + 'px'}}>
-                    {this.state.loss ? 'You lost, you fucking degenerate...' : 'Congratulations, you win!'}
-                    <button onClick={this.resetGame()}>Restart</button>
+                <div className={this.state.loss || this.state.win ? 'pop-up' : 'd-none'} style={{ width: parseInt(this.props.width) * 25 + 'px', height: parseInt(this.props.height) * 25 + 'px', top: -parseInt(this.props.height) * 25 + 'px' }}>
+                    <p>{this.state.loss ? 'You lost, would you like to try again?' : 'Congratulations, you win!'}</p>
+                    <button className='restart-button' onClick={this.resetGame()}>Restart</button>
                 </div>
             </div>
         )
