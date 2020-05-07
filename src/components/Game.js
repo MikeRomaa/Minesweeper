@@ -25,11 +25,14 @@ class Game extends Component {
     generateNukes(origin) {
         var nukesGenerated = 0
         var nukedBoard = this.state.board
+
+        // Prevents nuke generation around clicked tile
         var ignore = new Set()
         var surroundingTiles = this.getSurroundingTiles(origin)
         surroundingTiles.push(origin)
         surroundingTiles.forEach((value) => { ignore.add(JSON.stringify(value)) })
         
+        // Gets random coordinates and sets the tile to a nuke
         while (nukesGenerated < this.props.nukes) {
             var randX = Math.floor(Math.random() * this.props.width)
             var randY = Math.floor(Math.random() * this.props.height)
@@ -42,17 +45,19 @@ class Game extends Component {
         this.generateValues(nukedBoard)
     }
 
-    // Generates values for tiles (how many bombs surround the tile)
+    // Generates values for tiles
     generateValues(nukedBoard) {
         for (var x = 0; x < this.props.width; x++) {
             for (var y = 0; y < this.props.height; y++) {
                 var value = 0
+                // If tile is a nuke, the value will be set to number of nukes around it
                 if (!nukedBoard[y][x].nuke) {
                     for (let tile of this.getSurroundingTiles([x, y])) {
                         if (this.state.board[tile[1]][tile[0]].nuke) {
                             value++
                         }
                     }
+                // If tile is not a nuke, the value will be set to null
                 } else { value = null }
                 nukedBoard[y][x].value = value
             }
@@ -76,13 +81,16 @@ class Game extends Component {
         return tiles
     }
 
+    // Handles clearing clicked tiles
     clearTile(indexX, indexY) {
+        // Sets game state to lost if the clicked tile is a nuke.
         if (this.state.board[indexY][indexX].nuke) {
             this.setState({ loss: true })
         }
         let tempBoard = this.state.board
-        
         tempBoard[indexY][indexX].revealed = true
+        
+        // If value of tile is 0, adjacent tiles will be automatically revealed
         if (tempBoard[indexY][indexX].value === 0) {
             for (let tile of this.getSurroundingTiles([indexX, indexY])) {
                 tempBoard[tile[1]][tile[0]].revealed = true
@@ -91,6 +99,7 @@ class Game extends Component {
 
         this.setState({ board: tempBoard })
 
+        // Updates revealed tile counter and checks for win conditions
         let totalSafeTiles = this.props.height * this.props.width - this.props.nukes
         let revealedSafeTiles = 0
         this.state.board.forEach((row) => row.forEach((tile) => { if (tile.revealed) { revealedSafeTiles++ } }))
